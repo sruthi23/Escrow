@@ -1,73 +1,66 @@
-pragma solidity ^0.4.0;
-contract Adminsetup{
+pragma solidity 0.4.0;
 
-  struct adminstruct {
-    address _admin;
-    bool arbiter;
 
-  }
+contract AdminSetUp {
+    address private creator = msg.sender;
+    address[] private adminlist;
+    uint public count;
 
-  adminstruct[] public adminlist;
+    modifier onlyCreator {
+        if (msg.sender == creator);
+    }
+    /*struct Adminstruct {
+        address _admin;
+        bool arbiter;
+    }*/
 
-  function addAdmin(address _newadmin,bool flag) public{
-
-    adminstruct memory m;
-    m._admin=_newadmin;
-    m.arbiter= flag;
-    adminlist.push(m);
-  }
-
-  address admin = msg.sender;
-
-  modifier onlyAdmin{
-    require(msg.sender==admin);
-    _;
-
-  }
-  function newAdmin(address _newadmin) public
-  onlyAdmin{
-
-    admin = _newadmin;
-  }
-
+    function addMember(address _newadmin)public onlyCreator() {
+        adminlist.push(_newadmin);
+        count = adminlist.length();
+    }
 
 }
 
-contract Arbitersetup is Adminsetup{
-  address arbiter;
-  function Arbitersetup(address _arbiter) public{
-    if(msg.sender==admin){
-      arbiter = _arbiter;
-    }
-  }
-}
 
-contract Escrow is Adminsetup, Arbitersetup{
-  address buyer;
-  address seller;
-  bool sellerflag = false;
-  bool buyerflag = false;
-  function Escrow(address _seller,address _buyer)public{
-    seller = _seller;
-    buyer = _buyer;
-  }
+contract Escrow is AdminSetUp {
+    address private buyer;
+    address private seller;
+    bool private sellerflag;
+    bool private buyerflag;
 
-  function payToSeller(uint _amount,bool flag) public{
-    if(sellerflag == true)
-    {
-      if(msg.sender == buyer){
-        seller.transfer(_amount);
-      }
+    function Escrow(address _seller, address _buyer) public {
+        seller = _seller;
+        buyer = _buyer;
     }
-    if(flag == true){
-      selfdestruct(seller);
-    }
-  }
 
-  function confirm() public{
-    if(msg.sender == buyer){
-      buyerflag = true;
-      payToSeller(0,buyerflag);
+    function payToArbiter(uint _amount, address _arbiter) public {
+        for (i = 0; i < count; i++) {
+            uint f = 0;
+            if (adminlist[i] == _arbiter) {
+                f = 1;
+                exit;
+            }
+        }
+        if (msg.sender == seller && f == 1) {
+            _arbiter.transfer(_amount)
+        }
     }
-  }
+
+    function payToSeller(uint _amount, bool flag) public {
+        if (sellerflag == true) {
+            if (msg.sender == buyer) {
+                seller.transfer(_amount);
+            }
+        }
+        if (flag == true) {
+            selfdestruct(seller);
+        }
+    }
+
+    function confirm() public {
+        if (msg.sender == buyer) {
+            buyerflag = true;
+            payToSeller(0, buyerflag);
+        }
+    }
 }
