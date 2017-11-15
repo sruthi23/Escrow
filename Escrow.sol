@@ -7,7 +7,8 @@ contract AdminSetUp {
     uint public count;
 
     modifier onlyCreator {
-        if (msg.sender == creator);
+        if (msg.sender == creator)
+            _;
     }
     /*struct Adminstruct {
         address _admin;
@@ -34,7 +35,7 @@ contract Escrow is AdminSetUp {
     }
 
     function payToArbiter(uint _amount, address _arbiter) public {
-        for (i = 0; i < count; i++) {
+        for (uint8 i = 0; i < count; i++) {
             uint f = 0;
             if (adminlist[i] == _arbiter) {
                 f = 1;
@@ -42,7 +43,7 @@ contract Escrow is AdminSetUp {
             }
         }
         if (msg.sender == seller && f == 1) {
-            _arbiter.transfer(_amount)
+            _arbiter.transfer(_amount);
         }
     }
 
