@@ -1,54 +1,50 @@
 pragma solidity 0.4.0;
 
 
-contract AdminSetUp {
+contract AdminSetUp {   // contract for adding new admin
     address private creator = msg.sender;
-    address[] private adminlist;
+    address[] public adminlist;
     uint public count;
 
-    modifier onlyCreator {
+    modifier onlyCreator {  // only creator of contract is allowed to add admin
         if (msg.sender == creator)
             _;
     }
-    /*struct Adminstruct {
-        address _admin;
-        bool arbiter;
-    }*/
 
     function addMember(address _newadmin)public onlyCreator() {
         adminlist.push(_newadmin);
-        count = adminlist.length();
+        count = adminlist.length;
     }
 
 }
 
 
 contract Escrow is AdminSetUp {
-    address private buyer;
-    address private seller;
-    bool private sellerflag;
-    bool private buyerflag;
+    address private buyer;    //address of buyer
+    address private seller;   //address of seller
+    bool private sellerflag = false;  // value changes to true when seller sends money to escrow
+    bool private buyerflag = false;  // will be true when buyer receives goods from buyer
 
     function Escrow(address _seller, address _buyer) public {
         seller = _seller;
         buyer = _buyer;
     }
 
-    function payToArbiter(uint _amount, address _arbiter) public {
+    function payToArbiter(uint _amount, address _arbiter) public { // function for paying arbiter
+        uint f = 0;
         for (uint8 i = 0; i < count; i++) {
-            uint f = 0;
-            if (adminlist[i] == _arbiter) {
+            if (adminlist[i] == _arbiter) { // checking whether the requested arbiter is admin
                 f = 1;
                 exit;
             }
         }
-        if (msg.sender == seller && f == 1) {
+        if (msg.sender == seller && f == 1) { //seller sending money to arbitet
             _arbiter.transfer(_amount);
         }
     }
 
     function payToSeller(uint _amount, bool flag) public {
-        if (sellerflag == true) {
+        if (sellerflag == true) {     // buyer sends money to seller only if seller payed to arbiter
             if (msg.sender == buyer) {
                 seller.transfer(_amount);
             }
