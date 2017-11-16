@@ -33,18 +33,19 @@ contract Escrow is AdminSetUp {
     function payToArbiter(uint _amount, address _arbiter) public { // function for paying arbiter
         uint f = 0;
         for (uint8 i = 0; i < count; i++) {
-            if (adminlist[i] == _arbiter) { // checking whether the requested arbiter is admin
+            if (adminlist[i] == _arbiter) { // checking whether the requested arbitrator is admin
                 f = 1;
                 break;
             }
         }
-        if (msg.sender == seller && f == 1) { //seller sending money to arbitet
+        if (msg.sender == seller && f == 1) { //seller sending money to arbitrator
+            sellerflag = true;
             _arbiter.transfer(_amount);
         }
     }
 
     function payToSeller(uint _amount) public {
-        if (sellerflag == true) {     // buyer sends money to seller only if seller payed to arbiter
+        if (sellerflag == true) {     // buyer sends money to seller only if seller payed to arbitrator
             if (msg.sender == buyer) {
                 seller.transfer(_amount);
             }
@@ -59,7 +60,7 @@ contract Escrow is AdminSetUp {
         }
     }
 
-    function payback() public {   // arbiter payback to seller ones it get confirmation of receiving goods from buyer
+    function payback() public {   // arbitrator payback to seller ones it get confirmation of receiving goods from buyer
         if (msg.sender == buyer && buyerflag == true) {
             selfdestruct(seller);
         }
