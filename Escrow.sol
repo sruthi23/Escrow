@@ -22,8 +22,13 @@ contract AdminSetUp {   // contract for adding new admin
 contract Escrow is AdminSetUp {
     address private buyer;    //address of buyer
     address private seller;   //address of seller
-    bool private sellerflag = false;  // value changes to true when seller sends money to escrow
-    bool private buyerflag = false;  // will be true when buyer receives goods from buyer
+    address private arbiter;
+  //  bool private sellerflag = false;  // value changes to true when seller sends money to escrow
+    //bool private buyerflag = false;  // will be true when buyer receives goods from buyer
+
+    //added
+    bool private approval = false;
+    uint public amount = 0; //end
 
     function Escrow(address _seller, address _buyer) public {
         seller = _seller;
@@ -34,34 +39,35 @@ contract Escrow is AdminSetUp {
         uint f = 0;
         for (uint8 i = 0; i < count; i++) {
             if (adminlist[i] == _arbiter) { // checking whether the requested arbitrator is admin
+                arbiter = _arbiter;
                 f = 1;
                 break;
             }
         }
-        if (msg.sender == seller && f == 1) { //seller sending money to arbitrator
-            sellerflag = true;
+        if (msg.sender == buyer && f == 1) {
+            approval = true;
+            amount = _amount;
             _arbiter.transfer(_amount);
+            notifyBuyer(amount);
         }
-    }
-
-    function payToSeller(uint _amount) public {
-        if (sellerflag == true) {     // buyer sends money to seller only if seller payed to arbitrator
-            if (msg.sender == buyer) {
-                seller.transfer(_amount);
-            }
-        }
+        //end
 
     }
+
+    /*function notifyBuyer(uint _amount) public {
+        if (amount == _amount && approval == true) {
+            //console.log("delivered");
+        }
+    }*/
 
     function confirm() public {
-        if (msg.sender == buyer) {
-            buyerflag = true;
+        if (msg.sender == buyer || msg.sender == arbiter) {
             payback();
         }
     }
 
-    function payback() public {   // arbitrator payback to seller ones it get confirmation of receiving goods from buyer
-        if (msg.sender == buyer && buyerflag == true) {
+    function payback() public {   // arbiter payback to seller ones it get confirmation of receiving goods from buyer
+        if (msg.sender == buyer || msg.sender == arbiter) {
             selfdestruct(seller);
         }
     }
