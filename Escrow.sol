@@ -26,6 +26,8 @@ contract Escrow is AdminSetUp {
   //  bool private sellerflag = false;  // value changes to true when seller sends money to escrow
     //bool private buyerflag = false;  // will be true when buyer receives goods from buyer
 
+    event NotifySeller(uint _amount, address _seller); // triggered when buyer pays to arbitrator
+
     //added
     bool private approval = false;
     uint public amount = 0; //end
@@ -48,7 +50,9 @@ contract Escrow is AdminSetUp {
             approval = true;
             amount = _amount;
             _arbiter.transfer(_amount);
-            notifyBuyer(amount);
+        }
+        if (approval == true) {
+            NotifySeller(amount, buyer);
         }
         //end
 
@@ -59,7 +63,6 @@ contract Escrow is AdminSetUp {
             //console.log("delivered");
         }
     }*/
-
     function confirm() public {
         if (msg.sender == buyer || msg.sender == arbiter) {
             payback();
