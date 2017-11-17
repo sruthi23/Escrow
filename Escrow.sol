@@ -28,9 +28,9 @@ contract Escrow is AdminSetUp {
 
     event NotifySeller(uint _amount, address _seller); // triggered when buyer pays to arbitrator
 
-    //added
+
     bool private approval = false;
-    uint public amount = 0; //end
+    uint public amount = 0; 
 
     function Escrow(address _seller, address _buyer) public {
         seller = _seller;
@@ -54,15 +54,10 @@ contract Escrow is AdminSetUp {
         if (approval == true) {
             NotifySeller(amount, buyer);
         }
-        //end
+
 
     }
 
-    /*function notifyBuyer(uint _amount) public {
-        if (amount == _amount && approval == true) {
-            //console.log("delivered");
-        }
-    }*/
     function confirm() public {
         if (msg.sender == buyer || msg.sender == arbiter) {
             payback();
