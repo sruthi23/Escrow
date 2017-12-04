@@ -30,9 +30,10 @@ contract Escrow is AdminSetUp {
 	bool private approval = false;
 	uint public amount = 0; 
 
-	function Escrow(address _seller, address _buyer) public {
+	function Escrow(address _seller) public {
+
 		seller = _seller;
-		buyer = _buyer;
+		buyer = msg.sender;
 	}
 
 	function payToArbitrator(uint _amount, address _arbitrator) public {   // function for paying arbiter
