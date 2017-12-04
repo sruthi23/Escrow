@@ -1,12 +1,12 @@
 pragma solidity 0.4.0;
 
 
-contract AdminSetUp {   // contract for adding new admin
+contract AdminSetUp {   			  // contract for adding new admin
 	address private creator = msg.sender;
 	address[] public adminlist;
 	uint public count;
 
-	modifier onlyCreator {  // only creator of contract is allowed to add admin
+	modifier onlyCreator { 			 // only creator of contract is allowed to add admin
 		if (msg.sender == creator)
 		_;
 	}
@@ -20,12 +20,10 @@ contract AdminSetUp {   // contract for adding new admin
 
 
 contract Escrow is AdminSetUp {
-	address private buyer;    //address of buyer
-	address private seller;   //address of seller
+	address private buyer;    	    //address of buyer
+	address private seller;   	   //address of seller
 	address private arbitrator;
-	//  bool private sellerflag = false;  // value changes to true when seller sends money to escrow
-	//bool private buyerflag = false;  // will be true when buyer receives goods from buyer
-
+	
 	event NotifySeller(uint _amount, address _seller); // triggered when buyer pays to arbitrator
 
 
@@ -37,10 +35,10 @@ contract Escrow is AdminSetUp {
 		buyer = _buyer;
 	}
 
-	function payToArbitrator(uint _amount, address _arbitrator) public { // function for paying arbiter
+	function payToArbitrator(uint _amount, address _arbitrator) public {   // function for paying arbiter
 		uint f = 0;
 		for (uint8 i = 0; i < count; i++) {
-			if (adminlist[i] == _arbitrator) { // checking whether the requested arbitrator is admin
+			if (adminlist[i] == _arbitrator) { 		// checking whether the requested arbitrator is admin
 				arbitrator = _arbitrator;
 				f = 1;
 				break;
@@ -58,13 +56,13 @@ contract Escrow is AdminSetUp {
 
 	}
 
-	function confirm() public {  //buyer confirms once receives the goods
+	function confirm() public {  			//buyer confirms once receives the goods
 		if (msg.sender == buyer || msg.sender == arbitrator) {
 			payback();
 		}
 	}
 
-	function payback() public {   // arbitrator payback to seller ones it get confirmation of receiving goods from buyer
+	function payback() public {   			// arbitrator payback to seller ones it get confirmation of receiving goods from buyer
 		if (msg.sender == buyer || msg.sender == arbitrator) {
 			seller.transfer(amount);
 		}
