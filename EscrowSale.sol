@@ -82,25 +82,26 @@ contract EscrowSale is Escrow {
 
     }
 
-    uint public c = 0;
-
+    byte32 public orderId;
     mapping(uint => SaleData)public sale;
 
     function saleSetting(address _seller, address _arbitrator, uint _amount) public {
 
-        sale[c].buyer = msg.sender;
-        sale[c].seller = _seller;
-        sale[c].arbitrator = _arbitrator;
-        sale[c].amount = _amount;
 
-        address sender = sale[c].seller;
-        address receiver = sale[c].buyer;
-        address arbitrator = sale[c].arbitrator;
-        uint amount = sale[c].amount;
-        c++;
-        saleFunction(sender, receiver, arbitrator, amount);
-
-
+        orderId = keccak256("abdd4d");
+        SaleData memory sd;
+        sd.buyer = msg.sender;
+        sd.seller = _seller;
+        sd.arbitrator = _arbitrator;
+        sd.amount = msg.value;
+              //require(!sale[orderId]);
+        sale[orderId] = sd;
     }
+
+    function saleCall(bytes32 id) public {
+
+        saleFunction(sale[id].seller, sale[id].buyer, sale[id].arbitrator, sale[id].amount);
+    }
+
 
 }
