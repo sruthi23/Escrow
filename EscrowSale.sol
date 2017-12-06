@@ -12,7 +12,7 @@ contract AdminSetUp {   // contract for adding new admin
             _;
     }
 
-    function addMember(address _newadmin) public onlyCreator returns (uint) {
+    function addNewAdmin(address _newadmin) public onlyCreator returns (uint) {
         adminlist.push(_newadmin);
         count = adminlist.length;
         return count;
