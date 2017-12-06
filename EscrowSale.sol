@@ -12,14 +12,9 @@ contract AdminSetUp {   // contract for adding new admin
             _;
     }
 
-    /*function addNewAdmin(address _newadmin) public onlyCreator returns (uint) {
-        adminlist.push(_newadmin);
-        count = adminlist.length;
-        return count;
-    }*/
     mapping(address => bool) public adminlistKnown;
 
-    function addMember(address _newadmin) public returns(bool) {
+    function addNewAdmin(address _newadmin) public onlyCreator returns(bool) {
 
         if (!adminlistKnown[_newadmin]) {
             adminlist.push(_newadmin);
@@ -52,16 +47,10 @@ contract Escrow is AdminSetUp {
         buyer = _buyer;
 
 
-        for (uint8 i = 0; i < count; i++) {
-
-            if (adminlist[i] == _arbitrator) {      // checking whether the requested arbitrator is admin
-                arbitrator = _arbitrator;
-                amount = _amount;
-                f = 1;
-                break;
-            }
-        }
-
+        require(adminlistKnown[_arbitrator] == true);
+        arbitrator = _arbitrator;
+        amount = _amount;
+        f = 1;
 
         if (msg.sender == buyer && f == 1) {
             approval = true;
