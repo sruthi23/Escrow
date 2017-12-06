@@ -12,11 +12,23 @@ contract AdminSetUp {   // contract for adding new admin
             _;
     }
 
-    function addNewAdmin(address _newadmin) public onlyCreator returns (uint) {
+    /*function addNewAdmin(address _newadmin) public onlyCreator returns (uint) {
         adminlist.push(_newadmin);
         count = adminlist.length;
         return count;
+    }*/
+    mapping(address => bool) public adminlistKnown;
+
+    function addMember(address _newadmin) public returns(bool) {
+
+        if (!adminlistKnown[_newadmin]) {
+            adminlist.push(_newadmin);
+            adminlistKnown[_newadmin] = true;
+            return true;
+        }
+        return false;
     }
+
 
 }
 
