@@ -1,4 +1,4 @@
-pragma solidity 0.4.0;
+pragma solidity ^0.4.14;
 
 
 contract AdminSetUp {   			  // contract for adding new admin
@@ -23,12 +23,12 @@ contract Escrow is AdminSetUp {
 	address private buyer;    	    //address of buyer
 	address private seller;   	   //address of seller
 	address private arbitrator;
-	
+
 	event NotifySeller(uint _amount, address _seller); // triggered when buyer pays to arbitrator
 
 
 	bool private approval = false;
-	uint public amount = 0; 
+	uint public amount = 0;
 
 	function Escrow(address _seller) public {
 
