@@ -8,7 +8,7 @@ functions
 addMember(address _newadmin)  
 adds new admin/assigns admin privileges to address. This function is only accessible by creator of the contract.
 
-createEscrow(address _buyer,address _seller,address _arbitrator,uint _amount,bytes32 orderId)
+createEscrow(address _buyer,address _seller,address _arbitrator,uint _amount,bytes32 orderId)  
 set order details. _arbitrator must be admin and orderId must be unique.
 
 depositToEscrow(byte32 _id)  
