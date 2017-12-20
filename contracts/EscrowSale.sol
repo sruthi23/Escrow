@@ -38,7 +38,6 @@ contract EscrowSale {
 		address _arbitrator,
 		uint _amount,
 		bytes32 orderId) public{
-		//creator = msg.sender;
 		require(!orderdata[orderId].used);
 		require(adminlist[_arbitrator] == true);
 		OrderDetails memory sd;
