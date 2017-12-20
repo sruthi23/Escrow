@@ -3,7 +3,7 @@
 EscrowSale is a contract which act as a third party to enable transactions between parties.
 When buyer wish to buy from the "seller", buyer deposits ether to contract/escrow and seller get notified about this . once buyer receives goods/service from the seller, buyer gives confirmation. once the confirmation received arbitrator transfers the ether from contract to seller. 
 
-##functions
+## functions
 
 `addMember(address _newadmin)`
 
