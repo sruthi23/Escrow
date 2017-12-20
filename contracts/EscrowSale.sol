@@ -15,7 +15,7 @@ contract EscrowSale {
 	mapping(bytes32 => OrderDetails)public orderdata;
 	mapping(address => bool) public adminlist;
 
-	function EscrowSale() {
+	function EscrowSale() public {
 		creator = msg.sender;
 	}
 
