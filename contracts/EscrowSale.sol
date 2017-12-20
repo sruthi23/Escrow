@@ -1,112 +1,77 @@
 pragma solidity ^0.4.14;
 
-contract AdminSetUp {
 
+contract EscrowSale {
+	struct OrderDetails{
+		address buyer;
+		address seller;
+		address arbitrator;
+		uint amount;
+		bool status;
+		bool used;
+		bool recieved;
+	}
 	address public creator;
+	mapping(bytes32 => OrderDetails)public orderdata;
 	mapping(address => bool) public adminlist;
+
+	function EscrowSale() {
+		creator = msg.sender;
+	}
 
 	modifier onlyCreator {  // only creator of contract is allowed to add admin
 		if (msg.sender == creator)
 		_;
 	}
-
-	function AdminSetUp() public{
-		creator = msg.sender;
-	}
+	
+	event NotifySeller(bytes32 orderid, uint _amount, address _buyer);
+	event NotifyConfirmation(bytes32 orderid,address _seller, address _buyer);
 
 	function addMember(address _newadmin) public onlyCreator returns(bool){
 		require(!adminlist[_newadmin]);
 		adminlist[_newadmin] = true;
 		return true;
 	}
-}
 
-contract Escrow is AdminSetUp {
-	address public buyer;       //address of buyer
-	address public seller;      //address of seller
-	address public arbitrator;
-	uint f = 0;
-
-	event NotifySeller(uint _amount, address _seller);      // triggered when buyer pays to arbitrator
-	event success();
-
-	uint private status = 0;
-	uint public amount = 0;
-
-	function saleFunction(address _seller, address _buyer,address _arbitrator, uint _amount) payable public{     // function for paying arbiter
-
-		seller = _seller;
-		buyer = _buyer;
-
-		require(adminlist[_arbitrator] == true);
-		arbitrator = _arbitrator;
-		amount = _amount;
-		f=1;
-
-		if (msg.sender == buyer && f == 1) {
-			status =1;
-			//arbitrator.transfer(msg.value);
-			creator.transfer(msg.value);
-		}
-		if (status == 1) {
-			NotifySeller(amount, buyer);
-		}
-	}
-
-
-	function payback() payable public {
-		if (msg.sender == arbitrator) {
-			require(status == 1);
-			status = 2;
-			seller.transfer(msg.value);
-		}
-
-		if(status == 2){
-			success();
-		}
-	}
-}
-
-
-contract EscrowSale is Escrow{
- struct OrderDetails{
-		address buyer;
-		address seller;
-		address arbitrator;
-		uint amount;
-		bool used;
-	}
-	//uint c = 1;
-	bytes32 public orderId;
-
-	mapping(bytes32 => OrderDetails)public orderdata;
-
-	function orderSetting(address _seller, address _arbitrator, bytes32 key) public payable {
-
-		orderId = key;
+	function createEscrow(address _buyer,
+		address _seller,
+		address _arbitrator,
+		uint _amount,
+		bytes32 orderId) public{
+		//creator = msg.sender;
 		require(!orderdata[orderId].used);
-
+		require(adminlist[_arbitrator] == true);
 		OrderDetails memory sd;
-		sd.buyer = msg.sender;
+		sd.buyer = _buyer;
 		sd.seller = _seller;
 		sd.arbitrator = _arbitrator;
-		sd.amount = msg.value;
-		sd.used =true;
+		sd.amount = _amount;
+		sd.used = true;
 
 		orderdata[orderId] = sd;
 	}
 
-	function check(bytes32 _id) public view returns(bool)
-	{
-		if(msg.sender == orderdata[_id].seller && msg.sender == orderdata[_id].arbitrator)
-		{
-			return false;
-		}
-		return true;
+	function depositToEscrow(bytes32 _id) public payable {
+		require(msg.sender == orderdata[_id].buyer);
+		require(msg.value == orderdata[_id].amount);
+
+		orderdata[_id].status = true;
+		creator.transfer(msg.value);
+		NotifySeller(_id, orderdata[_id].amount, orderdata[_id].buyer);
 	}
 
-	function order(bytes32 id) payable public{
-		require(check(id));
-		saleFunction(orderdata[id].seller,orderdata[id].buyer,orderdata[id].arbitrator,orderdata[id].amount);
+	function buyerConfirmation(bytes32 _id) public {
+		require(msg.sender == orderdata[_id].buyer);
+
+		orderdata[_id].recieved = true;
+		NotifyConfirmation(_id,orderdata[_id].seller,orderdata[_id].buyer);
+	}
+
+	function finalizeOrder(bytes32 _id) public payable{
+		require(msg.sender == orderdata[_id].arbitrator);
+		require(orderdata[_id].recieved == true);
+		require(orderdata[_id].amount == msg.value);
+
+		orderdata[_id].seller.transfer(orderdata[_id].amount);
 	}
 }
