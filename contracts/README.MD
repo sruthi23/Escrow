@@ -5,17 +5,17 @@ when buyer wish to buy from the "seller", buyer deposits ether to contract/escro
 
 functions
 
-addMember(address _newadmin)
+addMember(address _newadmin)  
 adds new admin/assigns admin privileges to address. This function is only accessible by creator of the contract.
 
 createEscrow(address _buyer,address _seller,address _arbitrator,uint _amount,bytes32 orderId)
 set order details. _arbitrator must be admin and orderId must be unique.
 
-depositToEscrow(byte32 _id)
+depositToEscrow(byte32 _id)  
 deposits ether into contract address only by the buyer of corresponding order. And notifies the seller about the deposit by invoking the event NotifySeller(_id, orderdata[_id].amount, orderdata[_id].buyer).
 
-buyerConfirmation(byte32 _id)
+buyerConfirmation(byte32 _id)  
 once the service received by the seller, buyer gives the confirmation by calling the event NotifyConfirmation.
 
-finalizeOrder(byte32 _id)
+finalizeOrder(byte32 _id)  
 arbitrator transfers the ether from contract to seller address only the confirmation about delivery of service confirmed.
