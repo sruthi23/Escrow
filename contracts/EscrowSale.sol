@@ -26,6 +26,7 @@ contract EscrowSale {
 	
 	event NotifySeller(bytes32 orderid, uint _amount, address _buyer);
 	event NotifyConfirmation(bytes32 orderid,address _seller, address _buyer);
+	event NotifyForPayback(bytes32 orderid, uint _amount, address _buyer, address _seller);
 
 	function addMember(address _newadmin) public onlyCreator returns(bool){
 		require(!adminlist[_newadmin]);
@@ -51,6 +52,7 @@ contract EscrowSale {
 	}
 
 	function depositToEscrow(bytes32 _id) public payable {
+		require(!orderdata[_id].status = true;);
 		require(msg.sender == orderdata[_id].buyer);
 		require(msg.value == orderdata[_id].amount);
 
@@ -66,11 +68,21 @@ contract EscrowSale {
 		NotifyConfirmation(_id,orderdata[_id].seller,orderdata[_id].buyer);
 	}
 
-	function finalizeOrder(bytes32 _id) public payable{
+	function finalizeOrder(bytes32 _id) public payable {
 		require(msg.sender == orderdata[_id].arbitrator);
 		require(orderdata[_id].recieved == true);
 		require(orderdata[_id].amount == msg.value);
 
 		orderdata[_id].seller.transfer(orderdata[_id].amount);
+	}
+
+	function refund(bytes32 _id) public {
+		require(msg.sender == orderdata[_id].buyer);
+		NotifyForPayback(_id,orderdata[_id].amount, orderdata[_id].buyer,orderdata[_id].seller);
+	}
+
+	function paybackToBuyer(bytes32 _id) public payable {
+		require(msg.sender == orderdata[_id].arbitrator);
+		orderdata[_id].buyer.transfer(orderdata[_id].amount);
 	}
 }
