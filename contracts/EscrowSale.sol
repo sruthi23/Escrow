@@ -90,7 +90,7 @@ contract EscrowSale {
 		require(msg.sender == orderdata[_id].arbitrator);  
 		require(orderdata[_id].status == true && orderdata[_id].recieved == 0);
 
-		orderdata[_id].recieved == 3;
+		orderdata[_id].recieved = 3;
 		orderdata[_id].buyer.transfer(orderdata[_id].amount);
 	}
 }
