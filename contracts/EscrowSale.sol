@@ -10,7 +10,7 @@ contract EscrowSale {
 		bool status;
 		bool used;
 		uint8 recieved;
-		//bool recieved;
+
 	}
 	address public creator;
 	mapping(bytes32 => OrderDetails)public orderdata;
@@ -82,11 +82,15 @@ contract EscrowSale {
 
 	function refund(bytes32 _id) public {
 		require(msg.sender == orderdata[_id].buyer);
+		require(orderdata[_id].status == true);
 		NotifyForPayback(_id,orderdata[_id].amount, orderdata[_id].buyer,orderdata[_id].seller);
 	}
 
 	function paybackToBuyer(bytes32 _id) public payable {
-		require(msg.sender == orderdata[_id].arbitrator);
+		require(msg.sender == orderdata[_id].arbitrator);  
+		require(orderdata[_id].status == true && orderdata[_id].recieved == 0);
+
+		orderdata[_id].recieved == 3;
 		orderdata[_id].buyer.transfer(orderdata[_id].amount);
 	}
 }
