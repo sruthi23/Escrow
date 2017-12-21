@@ -24,4 +24,10 @@ Once the service received by the seller, buyer gives the confirmation by calling
 `finalizeOrder(byte32 _id)`
 Arbitrator transfers the ether from contract to seller address only the confirmation about delivery of service confirmed.
 
-> `depositToEscrow(byte32 _id)` and 'finalizeOrder(byte32 _id)' are `payable' functions since we are dealing with transactions here. Depositing ether into contract and transfering ether from contract to seller. 
+`refund(bytes32 _id)`
+In case service is not received, buyer can notify to refund only if the buyer deposited the ether into contract.
+
+`paybackToBuyer(bytes32 _id)`
+When the refund request received, then the arbitrator paybacks the deposited ether to buyer. 
+
+> `depositToEscrow(byte32 _id)` , 'finalizeOrder(byte32 _id)' and `paybackToBuyer(bytes32 _id)' are `payable' functions since we are dealing with transactions here. Depositing ether into contract and transfering ether from contract to seller or buyer. 
