@@ -65,8 +65,8 @@ contract EscrowSale {
 
 	function buyerConfirmation(bytes32 _id) public {
 		require(msg.sender == orderdata[_id].buyer);
-		require(orderdata[_id.recieved] == 0);
-		
+		require(orderdata[_id].recieved == 0);
+
 		orderdata[_id].recieved = 1;
 		NotifyConfirmation(_id,orderdata[_id].seller,orderdata[_id].buyer);
 	}
