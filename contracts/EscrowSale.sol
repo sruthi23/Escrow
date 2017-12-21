@@ -9,7 +9,8 @@ contract EscrowSale {
 		uint amount;
 		bool status;
 		bool used;
-		bool recieved;
+		uint8 recieved;
+		//bool recieved;
 	}
 	address public creator;
 	mapping(bytes32 => OrderDetails)public orderdata;
@@ -51,28 +52,30 @@ contract EscrowSale {
 		orderdata[orderId] = sd;
 	}
 
-	function depositToEscrow(bytes32 _id) public payable {
-		require(!orderdata[_id].status = true;);
+	function depositToEscrow(bytes32 _id) public payable returns(uint) {
+		require(!orderdata[_id].status == true);
 		require(msg.sender == orderdata[_id].buyer);
 		require(msg.value == orderdata[_id].amount);
 
-		orderdata[_id].status = true;
+		orderdata[_id].status = true; 
 		creator.transfer(msg.value);
 		NotifySeller(_id, orderdata[_id].amount, orderdata[_id].buyer);
+		
 	}
 
 	function buyerConfirmation(bytes32 _id) public {
 		require(msg.sender == orderdata[_id].buyer);
 
-		orderdata[_id].recieved = true;
+		orderdata[_id].recieved = 1;
 		NotifyConfirmation(_id,orderdata[_id].seller,orderdata[_id].buyer);
 	}
 
 	function finalizeOrder(bytes32 _id) public payable {
 		require(msg.sender == orderdata[_id].arbitrator);
-		require(orderdata[_id].recieved == true);
+		require(orderdata[_id].recieved == 1);
 		require(orderdata[_id].amount == msg.value);
 
+		orderdata[_id].recieved = 2;
 		orderdata[_id].seller.transfer(orderdata[_id].amount);
 	}
 
