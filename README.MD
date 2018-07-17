@@ -15,7 +15,7 @@ When buyer wish to buy from the "seller", buyer deposits ether to contract/escro
    Deposit ether into contract address only by the buyer of corresponding order. And notifies the seller about the deposit by invoking the event `NotifySeller(_id, orderdata[_id].amount, orderdata[_id].buyer)`
 
 4. `buyerConfirmation(byte32 _id)`
-   Once the service received by the seller, buyer gives the confirmation by calling the event NotifyConfirmation.
+   Once the service received by the seller, buyer gives the confirmation by calling the event `NotifyConfirmation`.
 
 5. `finalizeOrder(byte32 _id)`
    Arbitrator transfers the ether from contract to seller address only the confirmation about delivery of service confirmed.
